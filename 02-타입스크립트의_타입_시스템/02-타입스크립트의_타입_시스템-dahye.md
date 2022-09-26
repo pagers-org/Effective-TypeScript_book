@@ -1,4 +1,4 @@
-# 2장 타입스크립트의 타입 시스템
+# 2 타입스크립트의 타입 시스템
 
 # 아이템 6 - 편집기를 사용하여 타입시스템 탐색하기
 
@@ -8,10 +8,11 @@
 
 - 타입스크립트 컴파일러(tsc)
 - 단독 실행이 가능한 타입스크립트 서버 (tsserver)
+  [https://github.com/Microsoft/TypeScript/wiki/Standalone-Server-(tsserver)](https://github.com/Microsoft/TypeScript/wiki/Standalone-Server-%28tsserver%29)
 
 > 타입스크립트는 ‘**언어 서비스**’를 제공합니다.
 >
-> **언어서비스**는 코드 자동완성, 명세, 검새, 리팩터링을 포합합니다.
+> **언어서비스**는 코드 자동완성, 명세, 검색, 리팩터링을 포합합니다.
 >
 > 편집기를 사용하여 언어 서비스를 사용할 수 있고, 타입 스크립트 서버에서 언어 서비스를 제공하도록 설정하는 것을 추천합니다.
 >
@@ -28,7 +29,7 @@ function add(a: number, b: number) {
 → 심벌 위에 마우스 커서를 올리면 추론되는 것을 확인 할 수 있습니다.
 
 <aside>
-ℹ️ ‘**추론’**은 타입 ‘넓히기’ 와 ‘좁히기’ 를 위해 꼭 필요한 과정입니다.
+ℹ️ ‘추론’은 타입 ‘넓히기’ 와 ‘좁히기’ 를 위해 꼭 필요한 과정입니다.
 
 </aside>
 
@@ -46,8 +47,8 @@ function logMessage(message: string | null) {
 
 - `lib.dom.d.ts` 처럼 타입을 선언하여 사용할 수 있습니다.
 - definite types 깃허브를 확인해보세요
-
-https://github.com/axios/axios
+  https://github.com/DefinitelyTyped/DefinitelyTyped
+  https://github.com/axios/axios
 
 ---
 
@@ -57,7 +58,7 @@ https://github.com/axios/axios
 
   - 코드가 실행되기 전 ‘타입’ 기준으로 오류를 확인 할 수 있습니다.
     <aside>
-    ℹ️ 여기서 ‘**타입**’ 은 ‘**할당 가능한 값들의 집합**’입니다.
+    ℹ️ 여기서 ‘타입’ 은 ‘할당 가능한 값들의 집합’입니다.
 
     </aside>
 
@@ -65,7 +66,7 @@ https://github.com/axios/axios
 
 ## 집합으로 타입 알아보기
 
-### 공집합
+### 공집합 (never)
 
 - 가장 작은 집합입니다.
 - 아무것도 포함하지 않습니다. (아무 값도 할당 할 수 없습니다.)
@@ -98,7 +99,7 @@ const ab : ABTen; // 할당한 가능한 타입들은?
   (타입 스크립트 오류를 잘 살펴보세요. ‘할당 가능한’ 이라는 문구를 집합의 관점에서 ‘~의 집합에’ 해당하는지를 의미합니다.)
 
 <aside>
-ℹ️ **타입 체커**의 역할은 하나의 집합이 다른 집합의 부분 집합인지 검사하는 것입니다.
+ℹ️ 타입 체커의 역할은 하나의 집합이 다른 집합의 부분 집합인지 검사하는 것입니다.
 
 </aside>
 
@@ -132,28 +133,9 @@ type PersonSpan = Person & LifeSpan;
   };
   ```
     <aside>
-    ℹ️ **인터센션 타입**은 타입 내 속성을 모두 포함하는 것이 일반적인 규칙입니다.
+    ℹ️ 인터센션 타입은 타입 내 속성을 모두 포함하는 것이 일반적인 규칙입니다.
     
     </aside>
-
-### 속성에 대한 인터섹션
-
-- 각 타입에 속성을 모두 포함한다
-
-### 인터페이스 유니온
-
-- 유니온 타입에 속하는 값의 키를 찾는다.
-- 유니온에 대한 keyof는 확인한다.
-
-### 41page 인터페이스 유니온 잘 모르겠음 ㅠㅠ 다시 확인하기
-
-```tsx
-type K = keyof (Person | LifeSpan); //never
-
-let ps2: Record<K, any> = {
-  name: "",
-};
-```
 
 ### `extends` 키워드 사용하기
 
@@ -184,8 +166,6 @@ let ps2: Record<K, any> = {
 > `Vector3D` — Vector2D의 서브타입
 >
 > `Vector2D` - Vector1D의 서브타입
->
-> → 이는 벤다이어그램으로 봤을때 집합의 개념을 이해하기 더 용이합니다.
 >
 > - 위의 인터페이스 코드를 재작성해서 할당 가능성의 관계를 확인할 수 있습니다.
 >
@@ -255,6 +235,52 @@ sortBy(pts, "z");
 → K 가 상속하고 있는 것은 ‘x’, ‘y’가 가능하므로 집합 관계로 보면 자연스럽습니다.
 
 (’z’ 는 집합에 속하지 않습니다.)
+
+## 관계 요약 Table
+
+| TypeScript 용어             | 집합 용어                   |
+| --------------------------- | --------------------------- | ------- |
+| never                       | 공집합                      |
+| 리터럴 타입                 | 원소가 1개인 집합           |
+| 값이 T에 할당 가능          | 값 ∈ T(값이 T의 원소)       |
+| T1 이 T2에 할당 가능        | T1 ⊂ T2(T1이 T2의 부분집합) |
+| T1 이 T2에 상속             | T1 ⊂ T2(T1이 T2의 부분집합) |
+| T1 T2(T1과 T2의 유니온)     | T1 ⊂ T2(T1이 T2의 부분집합) |
+| T1                          | T2(T1과 T2의 유니온)        | T1 ∪ T2 |
+| T1 & T2(T1과 T2의 인터섹션) | T1 ∩ T2                     |
+
+### 부록 - 타입케스팅으로 타입 계층 확인하기
+
+```tsx
+/**
+ * https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+ * conditional type
+ * 타입 케스팅
+ * -> 이것을 통해 타입 계층을 확인 할 수 있다.
+ * -> 상위 타입인지 하위 타입인지 확인 때 사용할 수 있다.
+ * 헷갈리는 개념일때 이런 방식을 통해서 테스트 할 수 있다.
+ *
+ * 모든 타입과의 관계를 사람이 외울 수는 없으므로 이처럼 타입 캐스팅을 통해 확인할 수 있다/
+ *
+ * 타입 시스템
+ */
+
+// 타입이 맞는지 추론해준다 - 타입 케스팅의 사례
+type A = Array<string> extends Object ? true : false;
+type B = Function extends Object ? true : false;
+type C = string extends number ? true : false;
+type D = Object extends Function ? true : false;
+
+interface Animal {
+  name: string;
+}
+interface Person {
+  name: string;
+  age: number;
+}
+
+type PersonAndAnimal = Animal extends Person ? true : false;
+```
 
 ---
 
@@ -326,11 +352,13 @@ const v = typeof Cylinder; // 값 Cylinder
 type T = typeof Cylinder; // 타입 Cylinder
 ```
 
+![값과 타입으로 사용되는 class](./value_type_class.png)
+
 → 클래스는 자바스크립트에서 실제 함수로 구현됩니다.
 
 # 아이템 9 - 타입 단언보다 타입 선언 사용하기
 
-## 타입 단언
+## 타입 단언(`as`)
 
 - 강제로 타입을 지정
 - 타입 체커에게 오류를 무시하라는 것
@@ -344,7 +372,7 @@ type T = typeof Cylinder; // 타입 Cylinder
     
     (DOM에 접근할 수 없는 경우, 타입스크립트가 알지 못하는 정보를 개발자가 알고 있는 경우)
 
-## 타입 선언
+## 타입 선언(`:type`)
 
 - 할당되는 값이 해당 인터페이스를 만족하는지 검사
 - 안정성 체크가 가능하다.
@@ -588,6 +616,7 @@ const checkedFetch: typeof fetch = async (input, init) => {
 
 - **인터페이스는 유니온과 같은 복잡한 타입은 확장할 수 없습니다.**
 
+  - 타입은 타입 식별자다.
   - 타입을 확장하고 싶다면, 타입과 & 를 사용해야 합니다.
   - 아래와 같은 타입은 확장 할 수 없습니다.
 
@@ -624,6 +653,8 @@ const checkedFetch: typeof fetch = async (input, init) => {
   };
   ```
 
+[React TypeScript Cheatsheets | React TypeScript Cheatsheets](https://react-typescript-cheatsheet.netlify.app/)
+
 # 아이템 14 - 연산과 제너릭 사용으로 반복 줄이기
 
 1. DRY(Don’t repeat yourself) 원칙을 적용해야합니다.
@@ -658,7 +689,7 @@ const rocket: Rocket = {
 - 모든 키를 허용합니다.
 - 특정 키가 필요하지 않습니다.
 - ‘키’마다 다른 타입이 됩니다.
-- 키는 엇이든 가능하므로 자동 완성 기능이 동작하지 않습니다.
+- 키는 an엇이든 가능하므로 자동 완성 기능이 동작하지 않습니다.
   ⇒ 즉, 부정확합니다.
 
 ### 대안 0 - 인터페이스 활용하기
@@ -907,3 +938,7 @@ function shouldUpdate(
 ### 장점
 
 - 한 객체가 또 다른 객체와 정확히 같은 속성을 가졌는지 확인할 때 이상적입니다.
+
+---
+
+## 요약
